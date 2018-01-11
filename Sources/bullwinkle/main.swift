@@ -1,57 +1,38 @@
 import Foundation
-import Commander
+import Utility
+import Basic
 import XcodeProject
 
-private func fileURLValidator(_ string: String) throws -> String {
-	let currentDirectory: URL
-	let url: URL
-	currentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath, isDirectory: true)
-	url = URL(fileURLWithPath: string, relativeTo: currentDirectory)
-	guard FileManager.default.fileExists(atPath: url.path) else {
-		throw NSError(domain: NSURLErrorDomain, code: NSURLErrorFileDoesNotExist, userInfo: nil)
-	}
-	guard FileManager.default.isReadableFile(atPath: url.path) else {
-		throw NSError(domain: NSURLErrorDomain, code: NSURLErrorNoPermissionsToReadFile, userInfo: nil)
-	}
-	return url.path
-}
+let parser = ArgumentParser(commandName: "bullwinkle", usage: "[subcommand]", overview: "run and install Swift PM executables")
+let versionArgument = parser.add(option: "--version", shortName: "-v", kind: Bool.self, usage: "Prints the current version of Mint")
 
-extension PBXGroup {
-	func childGroup(path: [String]) -> PBXGroup? {
-		guard !path.isEmpty else {
-			return self
-		}
-		var path = path
-		let pathName = path.removeFirst()
-		let child = children.flatMap { $0 as? PBXGroup }.first {
-			return $0.displayName == pathName
-		}
-		return child?.childGroup(path: path)
-	}
-}
+let commands: [Command] = [
+	SortCommand(parser: parser),
+	SyncCommand(parser: parser)
+]
 
-extension PBXProject {
-	func group(for path: String) -> PBXGroup? {
-		let components = path.components(separatedBy: "/")
-		return mainGroup.childGroup(path: components)
+let arguments = Array(CommandLine.arguments.dropFirst())
+do {
+	let parsedArguments = try parser.parse(arguments)
+	
+	if let printVersion = parsedArguments.get(versionArgument), printVersion == true {
+		print(Version(0, 1, 0))
+		exit(0)
 	}
-}
-
-extension PBXGroup.SortOption: ArgumentConvertible {
-	public init(parser: ArgumentParser) throws {
-		if let value = parser.shift() {
-			guard let sortOption = PBXGroup.SortOption(rawValue: value) else {
-				throw ArgumentError.invalidType(value: value, type: "sort option", argument: nil)
-			}
-			self.init(rawValue: sortOption.rawValue)!
-		} else {
-			throw ArgumentError.missingValue(argument: nil)
-		}
+	
+	if let subParser = parsedArguments.subparser(parser) {
+		let command = commands.first { $0.name == subParser }
+		try command?.execute(parsedArguments: parsedArguments)
+	} else {
+		parser.printUsage(on: stdoutStream)
 	}
-
-	public var description: String {
-		return rawValue
-	}
+} catch ArgumentParserError.expectedValue(let value) {
+	print("Missing value for argument \(value).")
+} catch ArgumentParserError.expectedArguments(let parser, let arguments) {
+	print("Missing arguments: \(arguments.joined()).")
+	parser.printUsage(on: stdoutStream)
+} catch let error {
+	print(error)
 }
 
 enum BullwinkleError: Error, CustomStringConvertible {
@@ -70,52 +51,3 @@ enum BullwinkleError: Error, CustomStringConvertible {
 		}
 	}
 }
-func loadProject(projectPath: String, groupPath: String) throws -> (ProjectFile, PBXGroup) {
-	guard let projectFile = try ProjectFile(url: URL(fileURLWithPath: projectPath)) else {
-		throw BullwinkleError.invalidProject(path: projectPath)
-	}
-	let group: PBXGroup
-	if groupPath.isEmpty {
-		group = projectFile.project.mainGroup
-	} else {
-		guard let childGroup = projectFile.project.group(for: groupPath) else {
-			throw BullwinkleError.invalidGroup(groupPath)
-		}
-		group = childGroup
-	}
-	return (projectFile, group)
-}
-
-private let sort = command(
-	Argument<String>("xcodeproj", description: "Xcode Project file", validator: fileURLValidator),
-	Option("group", default: "", description: "Group to sort"),
-	Option<PBXGroup.SortOption>("order", default: .name, description: "Sort the group by one of [name, type]"),
-	Flag("recursive", default: false, flag: "r", description: "Recursively descend")
-) { (projectPath, groupPath, sortOrder, recursive) in
-	let (projectFile, group) = try loadProject(projectPath: projectPath, groupPath: groupPath)
-	group.sort(recursive: recursive, by: sortOrder)
-	try projectFile.save()
-}
-
-private let sync = command(
-	Argument<String>("xcodeproj", description: "Xcode Project file", validator: fileURLValidator),
-	Option("group", default: "", description: "Group to sync"),
-	Option("target", default: "", description: "Target to add new files"),
-	Flag("recursive", default: false, flag: "r", description: "Recursively descend")
-) { (projectPath, groupPath, targetName, recursive) in
-	let (projectFile, group) = try loadProject(projectPath: projectPath, groupPath: groupPath)
-	var target: PBXTarget? = nil
-	if !targetName.isEmpty {
-		target = projectFile.project.target(named: targetName)
-		guard target != nil else {
-			throw BullwinkleError.invalidTarget(targetName)
-		}
-	}
-	group.sync(recursive: recursive, target: target)
-	try projectFile.save()
-}
-let mainGroup = Group {
-	$0.addCommand("sort", "Sort the Xcode project group.", sort)
-	$0.addCommand("sync", "Sync the Xcode project groups with the filesystem.", sync)
-}
-mainGroup.run("0.1")

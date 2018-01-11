@@ -11,13 +11,13 @@ let package = Package(
 			.branch("master")
 		),
 		.package(
-			url: "https://github.com/kylef/Commander.git",
-			from: "0.8.0"
+			url: "https://github.com/apple/swift-package-manager.git",
+			from: "0.1.0"
 		)
     ],
     targets: [
         .target(
             name: "bullwinkle",
-            dependencies: ["XcodeProject", "Commander"]),
+            dependencies: ["XcodeProject", "Utility"]),
     ]
 )
