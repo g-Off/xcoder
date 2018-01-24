@@ -19,10 +19,9 @@ final class SyncArguments {
 class SyncCommand: Command {
 	let name: String = "sync"
 	let binder = ArgumentBinder<SyncArguments>()
-	let subparser: ArgumentParser
 	
 	required init(parser: ArgumentParser) {
-		self.subparser = parser.add(subparser: name, overview: "Sync the Xcode project groups with the filesystem.")
+		let subparser = parser.add(subparser: name, overview: "Sync the Xcode project groups with the filesystem.")
 		binder.bind(positional: subparser.add(positional: "xcodeproj", kind: URL.self, optional: false, usage: "Xcode Project file.")) { (syncArguments, xcodeproj) in
 			syncArguments.xcodeproj = xcodeproj
 		}
@@ -42,14 +41,14 @@ class SyncCommand: Command {
 		binder.fill(parsedArguments, into: &arguments)
 		
 		guard let projectFile = try ProjectFile(url: arguments.xcodeproj) else {
-			throw BullwinkleError.invalidProject(path: arguments.xcodeproj.path)
+			throw Bullwinkle.Error.invalidProject(path: arguments.xcodeproj.path)
 		}
 		let group = try projectFile.group(forPath: arguments.group)
 		
 		var target: PBXTarget?
 		if let targetName = arguments.targetName {
 			guard let targetNamed = projectFile.project.target(named: targetName) else {
-				throw BullwinkleError.invalidTarget(targetName)
+				throw Bullwinkle.Error.invalidTarget(targetName)
 			}
 			target = targetNamed
 		}

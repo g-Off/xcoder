@@ -4,20 +4,40 @@
 import PackageDescription
 
 let package = Package(
-    name: "bullwinkle",
+    name: "Bullwinkle",
+	products: [
+		.executable(
+			name: "bullwinkle",
+			targets: ["bullwinkle"]),
+		.library(
+			name: "MooseKit",
+			targets: ["MooseKit"]),
+		],
     dependencies: [
         .package(
 			url: "https://github.com/g-Off/XcodeProject.git",
-			.branch("master")
+			from: "0.1.0"
 		),
 		.package(
 			url: "https://github.com/apple/swift-package-manager.git",
 			from: "0.1.0"
 		)
     ],
-    targets: [
-        .target(
-            name: "bullwinkle",
-            dependencies: ["XcodeProject", "Utility"]),
-    ]
+	targets: [
+		.target(
+			name: "bullwinkle",
+			dependencies: [
+				"XcodeProject",
+				"Utility",
+				"MooseKit"
+			]
+		),
+		.target(
+			name: "MooseKit",
+			dependencies: [
+				"XcodeProject",
+				"Utility"
+			]
+		)
+	]
 )

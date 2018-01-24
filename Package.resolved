@@ -14,9 +14,9 @@
         "package": "XcodeProject",
         "repositoryURL": "https://github.com/g-Off/XcodeProject.git",
         "state": {
-          "branch": "master",
-          "revision": "905dde991b6e779bdd0ce8f1b23e0d5212c06a01",
-          "version": null
+          "branch": null,
+          "revision": "15bf493ff4f96d616de50bf131201ef1dda8e1e1",
+          "version": "0.1.0"
         }
       }
     ]

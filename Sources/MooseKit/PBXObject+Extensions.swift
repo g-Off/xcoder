@@ -13,7 +13,7 @@ extension ProjectFile {
 		let group: PBXGroup
 		if let path = path {
 			guard let childGroup = project.group(for: path) else {
-				throw BullwinkleError.invalidGroup(path)
+				throw Bullwinkle.Error.invalidGroup(path)
 			}
 			group = childGroup
 		} else {

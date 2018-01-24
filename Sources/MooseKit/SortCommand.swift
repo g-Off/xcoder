@@ -9,20 +9,13 @@ import Foundation
 import Utility
 import XcodeProject
 
-extension PBXGroup.SortOption: ArgumentKind {
+extension PBXGroup.SortOption: StringEnumArgument {
 	static var options: [(name: String, description: String)] = [
 		(name: PBXGroup.SortOption.name.rawValue, description: "Sort by name"),
 		(name: PBXGroup.SortOption.type.rawValue, description: "Sort by type")
 	]
 	public static var completion: ShellCompletion {
 		return .values(options.map { (value: $0.name, description: $0.description) })
-	}
-	
-	public init(argument: String) throws {
-		guard let sort = PBXGroup.SortOption(rawValue: argument) else {
-			throw ArgumentConversionError.unknown(value: argument)
-		}
-		self = sort
 	}
 }
 
@@ -36,10 +29,9 @@ final class SortArguments {
 class SortCommand: Command {
 	let name: String = "sort"
 	let binder = ArgumentBinder<SortArguments>()
-	let subparser: ArgumentParser
 	
 	required init(parser: ArgumentParser) {
-		self.subparser = parser.add(subparser: name, overview: "Sorts the given group (or top-level)")
+		let subparser = parser.add(subparser: name, overview: "Sorts the given group (or top-level)")
 		binder.bind(positional: subparser.add(positional: "xcodeproj", kind: URL.self, optional: false, usage: "Xcode Project file.")) { (sortArguments, xcodeproj) in
 			sortArguments.xcodeproj = xcodeproj
 		}
@@ -58,7 +50,7 @@ class SortCommand: Command {
 		var arguments = SortArguments()
 		binder.fill(parsedArguments, into: &arguments)
 		guard let projectFile = try ProjectFile(url: arguments.xcodeproj) else {
-			throw BullwinkleError.invalidProject(path: arguments.xcodeproj.path)
+			throw Bullwinkle.Error.invalidProject(path: arguments.xcodeproj.path)
 		}
 		let group = try projectFile.group(forPath: arguments.group)
 		group.sort(recursive: arguments.recursive, by: arguments.order)
