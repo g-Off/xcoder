@@ -9,6 +9,10 @@ debug: build
 build:
 	swift build --configuration $(CONFIGURATION) $(SWIFTC_FLAGS)
 	
+release: CONFIGURATION = release
+release:
+	swift build --configuration $(CONFIGURATION) $(SWIFTC_FLAGS)
+	
 test:
 	swift test $(SWIFTC_FLAGS)
 	
