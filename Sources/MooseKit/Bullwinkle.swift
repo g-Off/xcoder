@@ -12,14 +12,18 @@ import Basic
 public final class Bullwinkle {
 	public static let version = Version(0, 1, 0)
 	enum Error: Swift.Error, CustomStringConvertible {
-		case invalidProject(path: String)
+		case invalidProject(path: String?)
 		case invalidGroup(String)
 		case invalidTarget(String)
 		
 		var description: String {
 			switch self {
 			case .invalidProject(let path):
-				return "Invalid project at \(path)"
+				if let path = path {
+					return "Invalid project at \(path)"
+				} else {
+					return "No project specified"
+				}
 			case .invalidGroup(let groupPath):
 				return "Invalid group path \(groupPath)"
 			case .invalidTarget(let targetName):

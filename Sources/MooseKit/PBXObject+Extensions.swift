@@ -21,6 +21,16 @@ extension ProjectFile {
 		}
 		return group
 	}
+	
+	func buildPhase(named name: String) throws -> [PBXBuildPhase] {
+		guard let target = project.target(named: "") else {
+			throw Bullwinkle.Error.invalidTarget("")
+		}
+		
+		return target.buildPhases.filter {
+			$0.name == name
+		}
+	}
 }
 
 extension PBXGroup {
@@ -30,11 +40,28 @@ extension PBXGroup {
 		}
 		var path = path
 		let pathName = path.removeFirst()
-		let child = children.flatMap { $0 as? PBXGroup }.first {
+		let child = childGroups.first {
 			return $0.displayName == pathName
 		}
 		return child?.childGroup(path: path)
 	}
+	
+	var childGroups: [PBXGroup] {
+		return children.flatMap { $0 as? PBXGroup }
+	}
+	
+	func contains(_ reference: PBXReference, recursive: Bool) -> Bool {
+		if let _ = children.first(where: { $0 == reference }) {
+			return true
+		}
+		if recursive {
+			if let _ = childGroups.first(where: { $0.contains(reference, recursive: recursive) }) {
+				return true
+			}
+		}
+		return false
+	}
+	
 }
 
 extension PBXProject {

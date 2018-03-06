@@ -12,6 +12,5 @@ import XcodeProject
 protocol Command {
 	var name: String { get }
 	
-	init(parser: ArgumentParser)
 	func execute(parsedArguments: ArgumentParser.Result) throws
 }
