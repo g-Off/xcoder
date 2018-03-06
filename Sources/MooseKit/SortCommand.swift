@@ -105,7 +105,7 @@ final class SortCommand: Command {
 			var arguments = SortArguments()
 			binder.fill(parsedArguments, into: &arguments)
 			let projectFile = try SortCommand.projectLoaded(from: arguments)
-			let group = try projectFile.group(forPath: name)
+			let group = try projectFile.group(forPath: arguments.group)
 			group.sort(recursive: arguments.recursive, by: arguments.order)
 			try projectFile.save()
 		}
