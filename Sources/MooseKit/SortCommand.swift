@@ -80,7 +80,10 @@ final class SortCommand: Command {
 			throw Bullwinkle.Error.invalidProject(path: nil)
 		}
 		let xcodeproj = try projectURL(from: arguments)
-		guard let projectFile = try ProjectFile(url: xcodeproj) else {
+		let projectFile: ProjectFile
+		do {
+			projectFile = try ProjectFile(url: xcodeproj)
+		} catch {
 			throw Bullwinkle.Error.invalidProject(path: xcodeproj.path)
 		}
 		return projectFile

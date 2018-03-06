@@ -40,7 +40,10 @@ class SyncCommand: Command {
 		var arguments = SyncArguments()
 		binder.fill(parsedArguments, into: &arguments)
 		
-		guard let projectFile = try ProjectFile(url: arguments.xcodeproj) else {
+		let projectFile: ProjectFile
+		do {
+			projectFile = try ProjectFile(url: arguments.xcodeproj)
+		} catch {
 			throw Bullwinkle.Error.invalidProject(path: arguments.xcodeproj.path)
 		}
 		let group = try projectFile.group(forPath: arguments.group)
