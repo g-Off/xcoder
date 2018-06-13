@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/apple/swift-package-manager.git",
         "state": {
           "branch": null,
-          "revision": "90abb3c4c9415afee34291e66e655c58a1902784",
-          "version": "0.1.0"
+          "revision": "6983434787dec4e543e9d398a0a9acf63ccd4da1",
+          "version": "0.2.1"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/g-Off/XcodeProject.git",
         "state": {
           "branch": null,
-          "revision": "e46eb5645b0e9e762ce7b14ea4bdc9477b991342",
-          "version": "0.3.0"
+          "revision": "c4215ece309e60d646e510786fe0f60960419837",
+          "version": "0.3.1"
         }
       }
     ]
