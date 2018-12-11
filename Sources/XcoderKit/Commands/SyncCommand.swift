@@ -1,29 +1,32 @@
 //
 //  SortCommand.swift
-//  bullwinkle
+//  xcoder
 //
 //  Created by Geoffrey Foster on 2018-01-10.
 //
 
 import Foundation
 import Utility
+import Basic
 import XcodeProject
+import CommandRegistry
 
-final class SyncArguments {
-	var xcodeproj: Foundation.URL = URL(fileURLWithPath: ".")
-	var group: String?
-	var targetName: String?
-	var recursive: Bool = false
-}
-
-class SyncCommand: Command {
-	let name: String = "sync"
-	let binder = ArgumentBinder<SyncArguments>()
+public struct SyncCommand: Command {
+	private struct SyncArguments {
+		var xcodeproj: AbsolutePath = localFileSystem.currentWorkingDirectory!
+		var group: String?
+		var targetName: String?
+		var recursive: Bool = false
+	}
 	
-	required init(parser: ArgumentParser) {
-		let subparser = parser.add(subparser: name, overview: "Sync the Xcode project groups with the filesystem.")
-		binder.bind(positional: subparser.add(positional: "xcodeproj", kind: URL.self, optional: false, usage: "Xcode Project file.")) { (syncArguments, xcodeproj) in
-			syncArguments.xcodeproj = xcodeproj
+	public let command: String = "sync"
+	public let overview: String = "Sync the Xcode project groups with the filesystem."
+	private let binder = ArgumentBinder<SyncArguments>()
+	
+	public init(parser: ArgumentParser) {
+		let subparser = parser.add(subparser: command, overview: overview)
+		binder.bind(positional: subparser.add(positional: "xcodeproj", kind: PathArgument.self, optional: false, usage: "Xcode Project file.", completion: .filename)) { (syncArguments, xcodeproj) in
+			syncArguments.xcodeproj = xcodeproj.path
 		}
 		binder.bind(option: subparser.add(option: "--group", shortName: "-g", kind: String.self, usage: "Group name to sync. For a nested group specify the full path from parent to child with / inbetween.")) { (syncArguments, group) in
 			syncArguments.group = group
@@ -36,22 +39,22 @@ class SyncCommand: Command {
 		}
 	}
 	
-	func execute(parsedArguments: ArgumentParser.Result) throws {
+	public func run(with parsedArguments: ArgumentParser.Result) throws {
 		var arguments = SyncArguments()
-		binder.fill(parsedArguments, into: &arguments)
+		try binder.fill(parseResult: parsedArguments, into: &arguments)
 		
 		let projectFile: ProjectFile
 		do {
-			projectFile = try ProjectFile(url: arguments.xcodeproj)
+			projectFile = try ProjectFile(url: Foundation.URL(fileURLWithPath: arguments.xcodeproj.asString))
 		} catch {
-			throw Bullwinkle.Error.invalidProject(path: arguments.xcodeproj.path)
+			throw Error.invalidProject(path: arguments.xcodeproj.asString)
 		}
 		let group = try projectFile.group(forPath: arguments.group)
 		
 		var target: PBXTarget?
 		if let targetName = arguments.targetName {
 			guard let targetNamed = projectFile.project.target(named: targetName) else {
-				throw Bullwinkle.Error.invalidTarget(targetName)
+				throw Error.invalidTarget(targetName)
 			}
 			target = targetNamed
 		}

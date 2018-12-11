@@ -1,42 +1,32 @@
-// swift-tools-version:4.0
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
+// swift-tools-version:4.2
 import PackageDescription
 
 let package = Package(
-    name: "Bullwinkle",
+    name: "Xcoder",
 	products: [
 		.executable(
-			name: "bullwinkle",
-			targets: ["bullwinkle"]),
+			name: "xcoder",
+			targets: ["xcoder"]),
 		.library(
-			name: "MooseKit",
-			targets: ["MooseKit"]),
+			name: "XcoderKit",
+			targets: ["XcoderKit"]),
 		],
     dependencies: [
-        .package(
-			url: "https://github.com/g-Off/XcodeProject.git",
-			from: "0.3.1"
-		),
-		.package(
-			url: "https://github.com/apple/swift-package-manager.git",
-			from: "0.1.0"
-		)
+        .package(url: "https://github.com/g-Off/XcodeProject.git", from: "0.4.0"),
+		.package(url: "https://github.com/g-Off/CommandRegistry.git", .branch("master"))
     ],
 	targets: [
 		.target(
-			name: "bullwinkle",
+			name: "xcoder",
 			dependencies: [
-				"XcodeProject",
-				"Utility",
-				"MooseKit"
+				"XcoderKit"
 			]
 		),
 		.target(
-			name: "MooseKit",
+			name: "XcoderKit",
 			dependencies: [
 				"XcodeProject",
-				"Utility"
+				"CommandRegistry"
 			]
 		)
 	]

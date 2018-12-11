@@ -1,6 +1,6 @@
 //
 //  PBXObject+Extensions.swift
-//  bullwinkle
+//  xcoder
 //
 //  Created by Geoffrey Foster on 2018-01-11.
 //
@@ -13,7 +13,7 @@ extension ProjectFile {
 		let group: PBXGroup
 		if let path = path {
 			guard let childGroup = project.group(for: path) else {
-				throw Bullwinkle.Error.invalidGroup(path)
+				throw Error.invalidGroup(path)
 			}
 			group = childGroup
 		} else {
@@ -24,7 +24,7 @@ extension ProjectFile {
 	
 	func buildPhase(named name: String) throws -> [PBXBuildPhase] {
 		guard let target = project.target(named: "") else {
-			throw Bullwinkle.Error.invalidTarget("")
+			throw Error.invalidTarget("")
 		}
 		
 		return target.buildPhases.filter {
@@ -47,7 +47,7 @@ extension PBXGroup {
 	}
 	
 	var childGroups: [PBXGroup] {
-		return children.flatMap { $0 as? PBXGroup }
+		return children.compactMap { $0 as? PBXGroup }
 	}
 	
 	func contains(_ reference: PBXReference, recursive: Bool) -> Bool {

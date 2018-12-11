@@ -1,4 +1,4 @@
-# Bullwinkle
+# xcoder
 
 A simple command line tool for sorting and syncing an Xcode project file.
 
