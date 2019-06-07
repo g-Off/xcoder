@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Error: Swift.Error, CustomStringConvertible {
+enum Error: LocalizedError, CustomStringConvertible {
 	case invalidProject(path: String?)
 	case invalidGroup(String)
 	case invalidTarget(String)
@@ -25,5 +25,9 @@ enum Error: Swift.Error, CustomStringConvertible {
 		case .invalidTarget(let targetName):
 			return "Invalid target \(targetName)"
 		}
+	}
+	
+	var errorDescription: String? {
+		return description
 	}
 }
