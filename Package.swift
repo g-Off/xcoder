@@ -15,8 +15,8 @@ let package = Package(
 			targets: ["XcoderKit"]),
 		],
     dependencies: [
-        .package(url: "https://github.com/g-Off/XcodeProject.git", from: "0.5.0-alpha.2"),
-		.package(url: "https://github.com/g-Off/CommandRegistry.git", .branch("master"))
+        .package(url: "https://github.com/g-Off/XcodeProject.git", from: "0.5.0-alpha.3"),
+		.package(url: "https://github.com/g-Off/CommandRegistry.git", from: "0.1.0")
     ],
 	targets: [
 		.target(

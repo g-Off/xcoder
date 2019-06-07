@@ -5,9 +5,9 @@
         "package": "CommandRegistry",
         "repositoryURL": "https://github.com/g-Off/CommandRegistry.git",
         "state": {
-          "branch": "master",
-          "revision": "142aa27445e7998c5201b5ec9682698195d6701a",
-          "version": null
+          "branch": null,
+          "revision": "285f03ecdd5f3cce96e85b667a74c2be7e11079b",
+          "version": "0.1.0"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/g-Off/XcodeProject.git",
         "state": {
           "branch": null,
-          "revision": "9a1e1d107db329c4e0b8cf5cc9b11ad1a79f7156",
-          "version": "0.5.0-alpha.2"
+          "revision": "de0150084afc079464675f01f936924cceba4604",
+          "version": "0.5.0-alpha.3"
         }
       }
     ]
