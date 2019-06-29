@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Utility
+import CommandRegistry
 
 extension Foundation.URL: ArgumentKind {
 	public static let completion: ShellCompletion = .filename

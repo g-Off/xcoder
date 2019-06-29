@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import Utility
-import Basic
 import CommandRegistry
 
 public struct CompletionToolCommand: Command {

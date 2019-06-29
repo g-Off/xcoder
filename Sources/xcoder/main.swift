@@ -1,7 +1,5 @@
-import XcoderKit
 import Foundation
 import CommandRegistry
-import Utility
 
 var registry = Registry(usage: "<command> <options>", overview: "", version: Version.current)
 registry.register(command: CompletionToolCommand.self)

@@ -6,9 +6,7 @@
 //
 
 import Foundation
-import Utility
 import XcodeProject
-import Basic
 import CommandRegistry
 
 public struct GroupSortCommand: Command {
