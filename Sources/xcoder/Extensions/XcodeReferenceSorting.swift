@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import Basic
-import Utility
 import XcodeProject
+import CommandRegistry
 
 extension PBXReference.SortOption: StringEnumArgument {
 	static var options: [(name: String, description: String)] = [

@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import Basic
-import Utility
 import XcodeProject
+import CommandRegistry
 
 protocol XcodeProjectLoading {
 	var xcodeproj: AbsolutePath { get set }
