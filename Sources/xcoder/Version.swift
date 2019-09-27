@@ -1,5 +1,5 @@
 import CommandRegistry
 
 extension Version {
-	static var current: Version = "0.3.5"
+	static var current: Version = "0.3.6"
 }

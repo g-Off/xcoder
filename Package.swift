@@ -13,7 +13,7 @@ let package = Package(
 		),
 	],
 	dependencies: [
-		.package(url: "https://github.com/g-Off/XcodeProject.git", from: "0.5.0-alpha.5"),
+		.package(url: "https://github.com/g-Off/XcodeProject.git", from: "0.5.0"),
 		.package(url: "https://github.com/g-Off/CommandRegistry.git", from: "0.1.2")
 	],
 	targets: [
